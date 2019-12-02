@@ -12,17 +12,23 @@ import tB0l from './exported/tB0l';
 
 const DATA_STR = '"data":"';
 
-export default class ConfigDecoder {
-    public process(content: string, filename = 'configuration_pack.json'): TA6eResult {
-        const dataOffset = content.indexOf(DATA_STR) + DATA_STR.length;
-        const dataEndOffset = content.indexOf('"', dataOffset);
-        if (dataEndOffset - dataOffset < 128) throw new Error();
+export default class Config {
+    private readonly filenameKey: number[];
+    private readonly dataOffset: number;
+    private readonly dataEndOffset: number;
 
-        const filenameKey = processFilename(filename);
+    constructor(private readonly content: string, filename = 'configuration_pack.json') {
+        this.dataOffset = content.indexOf(DATA_STR) + DATA_STR.length;
+        this.dataEndOffset = content.indexOf('"', this.dataOffset);
+        if (this.dataEndOffset - this.dataOffset < 128) throw new Error();
 
-        const state = this.createScript(filenameKey).reduce(
+        this.filenameKey = processFilename(filename);
+    }
+
+    public decode(): TA6eResult {
+        const state = this.createScript(this.filenameKey).reduce(
             (stepState: TA8jResult, fn: TA8jResultProcessor) => fn(stepState),
-            A8j(content, dataOffset, dataEndOffset),
+            A8j(this.content, this.dataOffset, this.dataEndOffset),
         );
 
         const result = A6e(state);

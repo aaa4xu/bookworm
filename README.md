@@ -2,5 +2,5 @@
 
 ## Progress
 * [x] Config decoding
-* [ ] Image decoding
+* [x] Image decoding
 * [ ] HTTP client
