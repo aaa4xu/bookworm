@@ -1,0 +1,31 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "tslint-microsoft-contrib/latest"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-var-requires": false,
+    "no-console": false,
+    "curly": {
+      "options": "ignore-same-line"
+    },
+    "object-literal-sort-keys": {
+      "severity": "warning"
+    },
+    "prefer-array-literal": false,
+    "prefer-type-cast": false,
+    "no-unused-expression": {
+      "options": "allow-fast-null-checks"
+    },
+    "no-relative-imports": false,
+
+    "no-bitwise": false,
+    "one-variable-per-declaration": false,
+    "variable-name": false,
+    "export-name": false
+  },
+  "rulesDirectory": ["node_modules/tslint-microsoft-contrib"]
+}

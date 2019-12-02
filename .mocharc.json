@@ -1,0 +1,7 @@
+{
+  "r": "ts-node/register",
+  "diff": true,
+  "extension": ["ts"],
+  "ui": "bdd",
+  "spec": ["src/**/*.test.ts"]
+}
