@@ -25,7 +25,8 @@
     "no-bitwise": false,
     "one-variable-per-declaration": false,
     "variable-name": false,
-    "export-name": false
+    "export-name": false,
+    "import-name": false
   },
   "rulesDirectory": ["node_modules/tslint-microsoft-contrib"]
 }
