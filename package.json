@@ -36,6 +36,7 @@
     "tslint-microsoft-contrib": "^6.2.0",
     "typescript": "^3.7.2"
   },
+  "engines" : { "node" : ">=10" },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint:tslint && npm run lint:prettier && npm test"
