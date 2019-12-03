@@ -10,7 +10,7 @@
     "watch:test": "mocha --watch",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "clean": "rimraf build",
+    "clean": "rimraf dist",
     "lint:prettier": "prettylint \"src/**/*.ts\"",
     "lint:tslint": "tslint -c tslint.json \"src/**/*.ts\""
   },
