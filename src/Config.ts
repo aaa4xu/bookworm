@@ -1,7 +1,7 @@
 import { TA8jResult } from './exported';
 import A2F from './exported/A2F';
 import A3b from './exported/A3b';
-import A6e, { TA6eResult } from './exported/A6e';
+import A6e from './exported/A6e';
 import A6I from './exported/A6I';
 import A7L from './exported/A7L';
 import A8j from './exported/A8j';
@@ -25,7 +25,7 @@ export default class Config {
         this.filenameKey = processFilename(filename);
     }
 
-    public decode(): TA6eResult {
+    public decode(): TConfigDecoded {
         const state = this.createScript(this.filenameKey).reduce(
             (stepState: TA8jResult, fn: TA8jResultProcessor) => fn(stepState),
             A8j(this.content, this.dataOffset, this.dataEndOffset),
@@ -33,7 +33,7 @@ export default class Config {
 
         const result = A6e(state);
         result[0] = JSON.parse(result[0]);
-        return result;
+        return (result as any) as TConfigDecoded;
     }
 
     private createScript(filenameKey: number[]): TA8jResultProcessor[] {
@@ -53,3 +53,37 @@ export default class Config {
 }
 
 type TA8jResultProcessor = (state: TA8jResult) => TA8jResult;
+
+export type TConfigDecoded = [IConfigBook, string, string, string, number[], number[], number[]];
+
+export interface IConfigBook {
+    // configuration: IConfigBookConfiguration;
+    [page: string]: IConfigBookPage;
+}
+
+export interface IConfigBookPage {
+    FileLinkInfo: {
+        PageLinkInfoList: Array<{
+            Page: {
+                No: number;
+                NS: number;
+                PS: number;
+                RS: number;
+                BlockWidth: number;
+                BlockHeight: number;
+                Size: {
+                    Height: number;
+                    Width: number;
+                };
+            };
+        }>;
+    };
+}
+
+export interface IConfigBookConfiguration {
+    'file-name-version': string;
+    contents: Array<{
+        file: string;
+        index: number;
+    }>;
+}

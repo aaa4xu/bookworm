@@ -26,7 +26,8 @@
     "one-variable-per-declaration": false,
     "variable-name": false,
     "export-name": false,
-    "import-name": false
+    "import-name": false,
+    "non-literal-fs-path": false
   },
   "rulesDirectory": ["node_modules/tslint-microsoft-contrib"]
 }

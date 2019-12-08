@@ -3,9 +3,6 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import Image from './Image';
 
-// tslint:disable:non-literal-fs-path
-// tslint:disable:mocha-no-side-effect-code
-
 describe('Image', () => {
     it(`should correct encode image`, async () => {
         const image = new Image(path.join(__dirname, '__fixtures__', 'image-001-decoded.png'), {

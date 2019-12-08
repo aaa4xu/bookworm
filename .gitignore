@@ -2,5 +2,6 @@
 node_modules
 src/scripts/re
 storage
-src/index.ts
 dist
+src/Book.test.ts
+removeme.*

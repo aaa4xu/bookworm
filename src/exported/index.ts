@@ -45,6 +45,5 @@ export function createTA8jResult(input: TA8jResult): TA8jResult {
 }
 
 export async function readJsonFile<T = any>(filename: string): Promise<T> {
-    // tslint:disable-next-line:non-literal-fs-path
     return JSON.parse(await fs.readFile(filename, 'utf8'));
 }
