@@ -1,7 +1,8 @@
 .idea
 node_modules
 src/scripts/re
-storage
 dist
 src/Book.test.ts
 removeme.*
+browser-id.txt
+auth.json
