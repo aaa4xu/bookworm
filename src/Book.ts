@@ -34,7 +34,10 @@ export default class Book {
         private readonly contentConfig: IContentCheckResponse,
         encodedBookConfig: string,
     ) {
-        this.throttledHttpClient = new ClientWithThrottle(httpClient, { frame: 60, limit: 12 });
+        this.throttledHttpClient = new ClientWithThrottle(httpClient, {
+            frame: 60,
+            limit: parseInt(process.env.BW_THROTTLE || '12', 10),
+        });
         const config = new Config(encodedBookConfig, BookConfig.FILENAME).decode();
         const configuration: IConfigBookConfiguration = config[0].configuration as any;
         this.pages = configuration.contents.map(pageInfo => {
@@ -63,10 +66,17 @@ export default class Book {
             };
         });
 
+        console.log('Downloading:');
+        let ready = 0;
+        const total = items.length;
         for (const item of items) {
+            const filename = `page-${item.page.index.toString().padStart(3, '0')}.png`;
+
             try {
                 const image = await item.page.image(this.auth);
-                await fs.writeFile(path.join(folder, `page-${item.page.index}.png`), image);
+                await fs.writeFile(path.join(folder, filename), image);
+                console.log(`\t[${++ready}/${total}] ${filename}: Success`);
+
                 if (item.nextPage) {
                     const pb = new PutBookmark(this.auth, this.contentId, item.page.pageId, item.nextPage.pageId);
                     const auth = await pb.execute(this.httpClient);
@@ -76,7 +86,7 @@ export default class Book {
                     };
                 }
             } catch (err) {
-                console.warn(err.stack);
+                console.warn(`\t[${++ready}/${total}] ${filename}: Failed - ${err.stack}`);
             }
         }
     }
