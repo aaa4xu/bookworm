@@ -36,7 +36,7 @@ export default class Book {
     ) {
         this.throttledHttpClient = new ClientWithThrottle(httpClient, {
             frame: 60,
-            limit: parseInt(process.env.BW_THROTTLE || '12', 10),
+            limit: parseInt(process.env.BW_THROTTLE || '10', 10),
         });
         const config = new Config(encodedBookConfig, BookConfig.FILENAME).decode();
         const configuration: IConfigBookConfiguration = config[0].configuration as any;

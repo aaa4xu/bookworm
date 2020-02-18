@@ -6,3 +6,4 @@ src/Book.test.ts
 removeme.*
 browser-id.txt
 auth.json
+cookies.json

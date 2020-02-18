@@ -8,7 +8,7 @@
 3. `npm start`
 
 ## Env variables
-- `BW_THROTTLE` `default: 12` - Throttle http requests per minute to bookwalker
+- `BW_THROTTLE` `default: 10` - Throttle http requests per minute to bookwalker
 - `BW_DONT_SAVE_AUTH` `default: 0` - Disable saving username/password to `auth.json`
 - `BW_CONTENT_ID` - Non-interactive way to set contentId
 - `BW_USERNAME` - Non-interactive way to set username
