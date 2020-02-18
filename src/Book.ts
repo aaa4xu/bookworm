@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import Config, { IConfigBookConfiguration } from './Config';
+import ClientWithRetries from './Http/ClientWithRetries';
 import ClientWithThrottle from './Http/ClientWithThrottle';
 import IContentAuth from './Http/IContentAuth';
 import IContentCheckResponse from './Http/IContentCheckResponse';
@@ -34,10 +35,13 @@ export default class Book {
         private readonly contentConfig: IContentCheckResponse,
         encodedBookConfig: string,
     ) {
-        this.throttledHttpClient = new ClientWithThrottle(httpClient, {
-            frame: 60,
-            limit: parseInt(process.env.BW_THROTTLE || '10', 10),
-        });
+        this.throttledHttpClient = new ClientWithRetries(
+            new ClientWithThrottle(httpClient, {
+                frame: 60,
+                limit: parseInt(process.env.BW_THROTTLE || '10', 10),
+            }),
+            { max: 3, delay: 30000 },
+        );
         const config = new Config(encodedBookConfig, BookConfig.FILENAME).decode();
         const configuration: IConfigBookConfiguration = config[0].configuration as any;
         this.pages = configuration.contents.map(pageInfo => {

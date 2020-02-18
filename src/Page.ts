@@ -2,7 +2,9 @@ import { IConfigBookPage } from './Config';
 import { IA9pPage } from './exported/A9p';
 import B2y from './exported/B2y';
 import b8g from './exported/b8g';
-import HttpError from './Http/HttpError';
+import { ForbiddenHttpException } from './Http/Exceptions/ForbiddenHttpException';
+import HttpException from './Http/Exceptions/HttpException';
+import { Non2xxHttpException } from './Http/Exceptions/Non2xxHttpException';
 import IContentAuth from './Http/IContentAuth';
 import IHttpClient from './Http/IHttpClient';
 import Image from './Image';
@@ -64,12 +66,10 @@ export default class Page implements IA9pPage {
         };
         const response = await this.httpClient.execute(requestOptions);
 
-        if (response.statusCode !== 200) {
-            throw new HttpError(
-                `Image downloading error: Http status code ${response.statusCode}`,
-                requestOptions,
-                response,
-            );
+        if (response.statusCode === 403) {
+            throw new ForbiddenHttpException(requestOptions, response);
+        } else if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw new Non2xxHttpException(requestOptions, response);
         }
 
         return new Image(response.body, this).decode();
