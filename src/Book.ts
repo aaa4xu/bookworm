@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import Config, { IConfigBookConfiguration } from './Config';
+import { exists } from './exists';
 import ClientWithRetries from './Http/ClientWithRetries';
 import ClientWithThrottle from './Http/ClientWithThrottle';
 import IContentAuth from './Http/IContentAuth';
@@ -72,25 +73,32 @@ export default class Book {
 
         console.log('Downloading:');
         let ready = 0;
-        const total = items.length;
+        const total = items.length.toString();
         for (const item of items) {
-            const filename = `page-${item.page.index.toString().padStart(3, '0')}.png`;
+            const readyStr = (++ready).toString().padStart(total.length, '0');
+            const filename = `page-${readyStr}.png`;
+            const filepath = path.join(folder, filename);
+            const logPrefix = `\t[${readyStr}/${total}] ${filename}:`;
 
-            try {
-                const image = await item.page.image(this.auth);
-                await fs.writeFile(path.join(folder, filename), image);
-                console.log(`\t[${++ready}/${total}] ${filename}: Success`);
+            if (await exists(filepath)) {
+                console.log(logPrefix, `File already exists`);
+            } else {
+                try {
+                    const image = await item.page.image(this.auth);
+                    await fs.writeFile(filepath, image);
+                    console.log(logPrefix, `Success`);
 
-                if (item.nextPage) {
-                    const pb = new PutBookmark(this.auth, this.contentId, item.page.pageId, item.nextPage.pageId);
-                    const auth = await pb.execute(this.httpClient);
-                    this.auth = {
-                        ...this.auth,
-                        ...auth,
-                    };
+                    if (item.nextPage) {
+                        const pb = new PutBookmark(this.auth, this.contentId, item.page.pageId, item.nextPage.pageId);
+                        const auth = await pb.execute(this.httpClient);
+                        this.auth = {
+                            ...this.auth,
+                            ...auth,
+                        };
+                    }
+                } catch (err) {
+                    console.warn(logPrefix, `Failed`, err.stack);
                 }
-            } catch (err) {
-                console.warn(`\t[${++ready}/${total}] ${filename}: Failed - ${err.stack}`);
             }
         }
     }

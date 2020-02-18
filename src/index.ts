@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import readlineSync from 'readline-sync';
 import Book from './Book';
+import { exists } from './exists';
 import HttpClient from './Http/Client';
 import Login from './Http/Requests/Login';
 import StartSession from './Http/Requests/StartSession';
@@ -59,7 +60,7 @@ async function main() {
     console.log('Book loaded');
 
     const target = path.join(STORAGE_PATH, contentId);
-    await fs.mkdir(target);
+    if (!(await exists(target))) await fs.mkdir(target);
     await book.download(target);
     console.log('Done!');
 
