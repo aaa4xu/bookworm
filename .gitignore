@@ -7,3 +7,4 @@ removeme.*
 browser-id.txt
 auth.json
 cookies.json
+src/__fixtures__/non-even-image.json
