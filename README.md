@@ -1,4 +1,5 @@
 # Bookwalker client for Node.js
+**NOTE**: Bookworm supports only manga releases!
 
 ## How to use
 1. Install [Node.js](https://nodejs.org/).
