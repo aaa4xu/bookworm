@@ -3,7 +3,6 @@ import { IA9pPage } from './exported/A9p';
 import B2y from './exported/B2y';
 import b8g from './exported/b8g';
 import { ForbiddenHttpException } from './Http/Exceptions/ForbiddenHttpException';
-import HttpException from './Http/Exceptions/HttpException';
 import { Non2xxHttpException } from './Http/Exceptions/Non2xxHttpException';
 import IContentAuth from './Http/IContentAuth';
 import IHttpClient from './Http/IHttpClient';
@@ -27,16 +26,16 @@ export default class Page implements IA9pPage {
         private readonly key3: number[],
         private readonly baseUrl: string,
     ) {
-        const v_6if = this.config.FileLinkInfo.PageLinkInfoList[0].Page.NS,
-            v_7if = this.config.FileLinkInfo.PageLinkInfoList[0].Page.PS,
-            v_8if = this.config.FileLinkInfo.PageLinkInfoList[0].Page.RS;
+        const v_6if = this.pageConfig.NS,
+            v_7if = this.pageConfig.PS,
+            v_8if = this.pageConfig.RS;
 
         let v_0if = 47;
         for (let i = 0; i < this.pageId.length; i++) {
             v_0if += this.pageId.charCodeAt(i);
         }
 
-        const fileName = this.config.FileLinkInfo.PageLinkInfoList[0].Page.No.toString(10);
+        const fileName = this.pageConfig.No.toString(10);
         for (let i = 0; i < fileName.length; i++) {
             v_0if += fileName.charCodeAt(i);
         }
@@ -51,8 +50,12 @@ export default class Page implements IA9pPage {
         this.B0J = (v_9if ^ v_mhf(key1) ^ v_6if) >>> 0;
         this.B0K = (v_9if ^ v_mhf(key2) ^ v_7if) >>> 0;
         this.B0n = (v_9if ^ v_mhf(key3) ^ v_8if) >>> 0;
-        this.b8A = this.config.FileLinkInfo.PageLinkInfoList[0].Page.BlockWidth;
-        this.b6V = this.config.FileLinkInfo.PageLinkInfoList[0].Page.BlockHeight;
+        this.b8A = this.pageConfig.BlockWidth;
+        this.b6V = this.pageConfig.BlockHeight;
+    }
+
+    private get pageConfig() {
+        return this.config.FileLinkInfo.PageLinkInfoList[0].Page;
     }
 
     public async image(auth: IContentAuth): Promise<Buffer> {
@@ -72,7 +75,7 @@ export default class Page implements IA9pPage {
             throw new Non2xxHttpException(requestOptions, response);
         }
 
-        return new Image(response.body, this).decode();
+        return new Image(response.body, this, this.pageConfig.Size).decode();
     }
 }
 

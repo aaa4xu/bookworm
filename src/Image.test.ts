@@ -1,21 +1,18 @@
+import { loadImage } from 'canvas';
 import { expect } from 'chai';
 import { promises as fs } from 'fs';
+import sfs from 'fs';
 import path from 'path';
 import Image from './Image';
-import sfs from 'fs';
-import { KeyObject } from 'crypto';
-import { loadImage } from 'canvas';
 
-const ifFixtureExists = (path: string) => {
+const ifFixtureExists = (filepath: string) => {
     try {
-        sfs.statSync(path);
+        sfs.statSync(filepath);
         return { it };
-    } catch(err) {
+    } catch (err) {
         return { it: it.skip };
     }
-}
-
-const NOT_EVEN_IMAGE = path.join(__dirname, '__fixtures__', 'non-even-image.json');
+};
 
 describe('Image', () => {
     it(`should correct encode image`, async () => {
@@ -48,12 +45,22 @@ describe('Image', () => {
         );
     });
 
-    ifFixtureExists(NOT_EVEN_IMAGE).it('should crop not even image', async () => {
-        const imageConfig = JSON.parse(await fs.readFile(NOT_EVEN_IMAGE, 'utf8'));
-        const imageBuffer = Buffer.from(imageConfig.sourceImage);
-        const image = new Image(imageBuffer, imageConfig.page);
-        const decodedImage = await image.decode();
-        const imageInfo = await loadImage(decodedImage);
-        expect(imageInfo.width).be.equal(1801);
-    });
+    ifFixtureExists(path.join(__dirname, '__fixtures__', 'non-even-image.json')).it(
+        'should crop not even image',
+        async () => {
+            const imageConfig = JSON.parse(
+                await fs.readFile(path.join(__dirname, '__fixtures__', 'non-even-image.json'), 'utf8'),
+            );
+            const imageBuffer = Buffer.from(imageConfig.sourceImage);
+            const image = new Image(imageBuffer, imageConfig.page, {
+                X: 0,
+                Y: 0,
+                Height: 2560,
+                Width: 1801,
+            });
+            const decodedImage = await image.decode();
+            const imageInfo = await loadImage(decodedImage);
+            expect(imageInfo.width).be.equal(1801);
+        },
+    );
 });
