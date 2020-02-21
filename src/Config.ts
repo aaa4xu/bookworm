@@ -71,13 +71,17 @@ export interface IConfigBookPage {
                 RS: number;
                 BlockWidth: number;
                 BlockHeight: number;
-                Size: {
-                    Height: number;
-                    Width: number;
-                };
+                Size: IConfigBookPageSize;
             };
         }>;
     };
+}
+
+export interface IConfigBookPageSize {
+    Height: number;
+    Width: number;
+    X: number;
+    Y: number;
 }
 
 export interface IConfigBookConfiguration {

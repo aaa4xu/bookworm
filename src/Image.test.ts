@@ -1,7 +1,18 @@
+import { loadImage } from 'canvas';
 import { expect } from 'chai';
 import { promises as fs } from 'fs';
+import sfs from 'fs';
 import path from 'path';
 import Image from './Image';
+
+const ifFixtureExists = (filepath: string) => {
+    try {
+        sfs.statSync(filepath);
+        return { it };
+    } catch (err) {
+        return { it: it.skip };
+    }
+};
 
 describe('Image', () => {
     it(`should correct encode image`, async () => {
@@ -33,4 +44,23 @@ describe('Image', () => {
             await fs.readFile(path.join(__dirname, '__fixtures__', 'image-001-decoded.png')),
         );
     });
+
+    ifFixtureExists(path.join(__dirname, '__fixtures__', 'non-even-image.json')).it(
+        'should crop not even image',
+        async () => {
+            const imageConfig = JSON.parse(
+                await fs.readFile(path.join(__dirname, '__fixtures__', 'non-even-image.json'), 'utf8'),
+            );
+            const imageBuffer = Buffer.from(imageConfig.sourceImage);
+            const image = new Image(imageBuffer, imageConfig.page, {
+                X: 0,
+                Y: 0,
+                Height: 2560,
+                Width: 1801,
+            });
+            const decodedImage = await image.decode();
+            const imageInfo = await loadImage(decodedImage);
+            expect(imageInfo.width).be.equal(1801);
+        },
+    );
 });
